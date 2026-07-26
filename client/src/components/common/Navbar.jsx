@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Briefcase, Sparkles, Kanban, PlusCircle, Menu, X, Rocket } from 'lucide-react';
+import { Briefcase, Sparkles, Kanban, PlusCircle, Menu, X, Rocket, Github, Globe } from 'lucide-react';
 import { PostJobModal } from '../jobs/PostJobModal';
 
 export const Navbar = () => {
@@ -63,6 +63,25 @@ export const Navbar = () => {
 
           {/* Action Button */}
           <div className="hidden md:flex items-center space-x-3">
+            <a
+              href="https://github.com/susmithamannem004/Jobhub-AI"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800 transition-colors"
+              title="View Source on GitHub"
+            >
+              <Github className="w-4 h-4" />
+            </a>
+            <a
+              href="https://vercel.com/susmimannem67-5551s-projects/jobhub-ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800 transition-colors"
+              title="View Vercel Dashboard"
+            >
+              <Globe className="w-4 h-4" />
+            </a>
+
             <button
               onClick={() => setIsPostJobModalOpen(true)}
               className="px-4 py-2 text-sm font-semibold rounded-xl bg-gradient-to-r from-brand-600 to-accent-600 hover:from-brand-500 hover:to-accent-500 text-white shadow-lg shadow-brand-600/20 hover:shadow-brand-600/35 transition-all duration-200 flex items-center space-x-2 cursor-pointer"

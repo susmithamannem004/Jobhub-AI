@@ -16,22 +16,22 @@ export const Footer = () => {
 
         <div className="flex items-center space-x-6">
           <a
-            href="https://github.com"
+            href="https://github.com/susmithamannem004/Jobhub-AI"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center space-x-1.5 hover:text-white transition-colors"
           >
             <Github className="w-4 h-4" />
-            <span>GitHub</span>
+            <span>GitHub Repository</span>
           </a>
           <a
-            href="https://vercel.com"
+            href="https://vercel.com/susmimannem67-5551s-projects/jobhub-ai"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center space-x-1.5 hover:text-white transition-colors"
           >
             <Globe className="w-4 h-4" />
-            <span>Vercel Deployment</span>
+            <span>Vercel Dashboard</span>
           </a>
         </div>
       </div>
