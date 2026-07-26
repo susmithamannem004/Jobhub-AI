@@ -1,0 +1,39 @@
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const DATA_DIR = path.resolve(__dirname, '../data');
+
+/**
+ * Read data from a specified JSON file in the data directory
+ */
+export async function readJson(filename) {
+  const filePath = path.join(DATA_DIR, filename);
+  try {
+    const content = await fs.readFile(filePath, 'utf-8');
+    return JSON.parse(content);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return [];
+    }
+    console.error(`Error reading JSON file ${filename}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Write data to a specified JSON file in the data directory
+ */
+export async function writeJson(filename, data) {
+  const filePath = path.join(DATA_DIR, filename);
+  try {
+    await fs.mkdir(DATA_DIR, { recursive: true });
+    await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
+    return true;
+  } catch (error) {
+    console.error(`Error writing JSON file ${filename}:`, error);
+    throw error;
+  }
+}

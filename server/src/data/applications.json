@@ -1,0 +1,22 @@
+[
+  {
+    "id": "app-201",
+    "jobId": "job-101",
+    "jobTitle": "Senior React & Node.js Engineer",
+    "company": "TechPulse Systems",
+    "status": "Interviewing",
+    "notes": "Technical screen scheduled for Thursday with Tech Lead. Revised system architecture notes.",
+    "appliedAt": "2026-07-25T11:20:00Z",
+    "updatedAt": "2026-07-26T08:00:00Z"
+  },
+  {
+    "id": "app-202",
+    "jobId": "job-103",
+    "jobTitle": "Frontend Lead (React + Vite)",
+    "company": "FlowCraft UI Studio",
+    "status": "Applied",
+    "notes": "Submitted application via JobHub AI match portal. Attached optimized cover letter.",
+    "appliedAt": "2026-07-26T07:10:00Z",
+    "updatedAt": "2026-07-26T07:10:00Z"
+  }
+]

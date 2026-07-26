@@ -1,0 +1,98 @@
+[
+  {
+    "id": "job-101",
+    "title": "Senior React & Node.js Engineer",
+    "company": "TechPulse Systems",
+    "logo": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&auto=format&fit=crop&q=80",
+    "location": "Remote",
+    "type": "Full-time",
+    "experience": "Senior Level",
+    "salary": "$135,000 - $160,000 / year",
+    "postedAt": "2026-07-24T10:00:00Z",
+    "tags": ["React", "Node.js", "Express", "Tailwind CSS", "TypeScript", "REST API"],
+    "description": "TechPulse Systems is looking for a Senior Full Stack Engineer to lead the architecture and development of our next-gen candidate analytics dashboard. You will design scalable web applications using React, Express, and microservices.",
+    "requirements": [
+      "5+ years of experience with modern React, JavaScript (ES6+), and Node.js.",
+      "Proven expertise building REST APIs and real-time state management.",
+      "Experience with Tailwind CSS, Vite, and frontend optimization.",
+      "Solid knowledge of CI/CD pipelines (GitHub Actions, Vercel/AWS deployment).",
+      "Strong background in automated testing and clean UI architecture."
+    ]
+  },
+  {
+    "id": "job-102",
+    "title": "AI Platform & Full Stack Developer",
+    "company": "NeuralMind Analytics",
+    "logo": "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=100&auto=format&fit=crop&q=80",
+    "location": "San Francisco, CA (Hybrid)",
+    "type": "Full-time",
+    "experience": "Mid-Senior Level",
+    "salary": "$145,000 - $175,000 / year",
+    "postedAt": "2026-07-25T14:30:00Z",
+    "tags": ["React", "Python", "Node.js", "OpenAI API", "Vector DB", "Tailwind CSS"],
+    "description": "Join NeuralMind to build AI-assisted decision dashboards for enterprise recruiters. You will work on integrating LLM APIs, vector stores, and high-performance React client applications.",
+    "requirements": [
+      "3+ years experience with React, Node.js, and Python backend services.",
+      "Hands-on experience with OpenAI API, LLM prompt engineering, or NLP techniques.",
+      "Proficiency with modern CSS frameworks (Tailwind) and responsive layout design.",
+      "Familiarity with serverless architectures and cloud API gateways."
+    ]
+  },
+  {
+    "id": "job-103",
+    "title": "Frontend Lead (React + Vite)",
+    "company": "FlowCraft UI Studio",
+    "logo": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=100&auto=format&fit=crop&q=80",
+    "location": "Remote",
+    "type": "Contract",
+    "experience": "Lead",
+    "salary": "$90 - $115 / hour",
+    "postedAt": "2026-07-26T06:15:00Z",
+    "tags": ["React", "Vite", "Tailwind CSS", "Redux", "UX Design", "Framer Motion"],
+    "description": "We are seeking a Frontend Lead to craft stunning user experiences for client web apps. You will establish design token systems, craft fluid animations, and mentor junior engineers.",
+    "requirements": [
+      "6+ years frontend software development experience.",
+      "Expert knowledge in React, Vite build system, and component design patterns.",
+      "Mastery of Tailwind CSS, CSS Grid, animations, and accessibility (a11y).",
+      "Demonstrated portfolio of sleek, highly responsive web interfaces."
+    ]
+  },
+  {
+    "id": "job-104",
+    "title": "Backend Express & Cloud Engineer",
+    "company": "DataBridge Global",
+    "logo": "https://images.unsplash.com/photo-1572021335469-31706a17aaef?w=100&auto=format&fit=crop&q=80",
+    "location": "New York, NY",
+    "type": "Full-time",
+    "experience": "Mid Level",
+    "salary": "$120,000 - $140,000 / year",
+    "postedAt": "2026-07-23T09:00:00Z",
+    "tags": ["Node.js", "Express", "REST API", "JSON File DB", "Docker", "Vercel"],
+    "description": "DataBridge is expanding its core developer services team. You will build high-throughput Express REST APIs, manage lightweight data persistence layers, and set up deployment automation.",
+    "requirements": [
+      "3+ years experience with Node.js and Express RESTful Web Services.",
+      "Strong understanding of JSON data modeling, caching, and stream processing.",
+      "Experience with Vercel, Docker, and GitHub Actions CI/CD pipelines.",
+      "Good understanding of web security fundamentals (CORS, JWT, Rate Limiting)."
+    ]
+  },
+  {
+    "id": "job-105",
+    "title": "Junior Full Stack Developer",
+    "company": "Apex Software Labs",
+    "logo": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=100&auto=format&fit=crop&q=80",
+    "location": "Austin, TX (Remote optional)",
+    "type": "Full-time",
+    "experience": "Junior / Entry",
+    "salary": "$80,000 - $95,000 / year",
+    "postedAt": "2026-07-26T01:00:00Z",
+    "tags": ["React", "JavaScript", "Express", "CSS", "Git", "Axios"],
+    "description": "Apex Software Labs is hiring an enthusiastic Junior Developer to contribute across our React frontend and Express backend. Great mentorship environment for early career talent!",
+    "requirements": [
+      "1+ years experience or portfolio of full-stack projects using React and Node.js.",
+      "Familiarity with REST APIs, JSON data structures, and Axios client calls.",
+      "Solid foundation in JavaScript, HTML5, CSS3, and Git workflows.",
+      "Strong problem-solving mindset and passion for continuous learning."
+    ]
+  }
+]
