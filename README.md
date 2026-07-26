@@ -1,6 +1,6 @@
 ﻿# 🚀 JobHub AI
 
-[![CI/CD Pipeline](https://github.com/susmithamannem004/Jobhub-AI/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/susmithamannem004/Jobhub-AI/actions/workflows/ci-cd.yml)
+[![CI/CD Pipeline](https://github.com/susmithamannem004/JobHub-AI/actions/workflows/ci-cd.yml/badge.svg?branch=main)](https://github.com/susmithamannem004/JobHub-AI/actions/workflows/ci-cd.yml)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-jobhub--ai--kohl.vercel.app-brightgreen?logo=vercel)](https://jobhub-ai-kohl.vercel.app)
 [![GitHub](https://img.shields.io/badge/GitHub-susmithamannem004%2FJobhub--AI-black?logo=github)](https://github.com/susmithamannem004/Jobhub-AI)
 
