@@ -1,6 +1,22 @@
 # 🚀 JobHub AI - Smart Job Matching & Career Assistant Platform
 
-JobHub AI is a full-stack, AI-powered career assistant and job platform built with **React 18 + Vite**, **Express.js**, **Tailwind CSS**, **Axios**, and a **JSON File Database Engine**. It features real-time candidate resume matching, AI cover letter generation, and a Kanban application pipeline tracker.
+> **Technical Assessment Submission for Software Developer Position (Hyderabad, India)**
+> 
+> - **GitHub Repository**: [https://github.com/susmithamannem004/Jobhub-AI](https://github.com/susmithamannem004/Jobhub-AI)
+> - **Vercel Deployment**: [https://vercel.com/susmimannem67-5551s-projects/jobhub-ai](https://vercel.com/susmimannem67-5551s-projects/jobhub-ai)
+
+---
+
+## 📋 Assessment Requirements Compliance Checklist
+
+| # | Assessment Requirement | Status | Implementation Details |
+|---|---|---|---|
+| 1 | **Build web app with business value using AI** | ✅ **Achieved** | Built **JobHub AI**: Full-stack job board & candidate career platform featuring dual AI resume matching (TF-IDF & GPT-4o) and cover letter generation. |
+| 2 | **Push code to GIT** | ✅ **Achieved** | Source code fully committed & pushed to GitHub repository: [susmithamannem004/Jobhub-AI](https://github.com/susmithamannem004/Jobhub-AI). |
+| 3 | **Write CI/CD pipeline using AI on GIT** | ✅ **Achieved** | Automated GitHub Actions workflow configured in [.github/workflows/ci-cd.yml](file:///.github/workflows/ci-cd.yml) with client/server build audits. |
+| 4 | **Deploy to Vercel using CI/CD pipeline** | ✅ **Achieved** | Configured monorepo serverless deployment in [vercel.json](file:///vercel.json) & deployed to Vercel. |
+| 5 | **Write documentation using AI** | ✅ **Achieved** | Comprehensive architectural, REST API, setup, and deployment documentation written in `README.md`. |
+| 6 | **Send to reviewer** | 🟢 **Ready** | Repository and deployment links packaged for candidate submission. |
 
 ---
 
