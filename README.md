@@ -1,117 +1,118 @@
-# 🚀 JobHub AI - Smart Job Matching & Career Assistant Platform
+﻿# 🚀 JobHub AI
 
-> **Technical Assessment Submission for Software Developer Position (Hyderabad, India)**
-> 
-> - **GitHub Repository**: [https://github.com/susmithamannem004/Jobhub-AI](https://github.com/susmithamannem004/Jobhub-AI)
-> - **Vercel Deployment**: [https://vercel.com/susmimannem67-5551s-projects/jobhub-ai](https://vercel.com/susmimannem67-5551s-projects/jobhub-ai)
+[![CI/CD Pipeline](https://github.com/susmithamannem004/Jobhub-AI/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/susmithamannem004/Jobhub-AI/actions/workflows/ci-cd.yml)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-jobhub--ai--kohl.vercel.app-brightgreen?logo=vercel)](https://jobhub-ai-kohl.vercel.app)
+[![GitHub](https://img.shields.io/badge/GitHub-susmithamannem004%2FJobhub--AI-black?logo=github)](https://github.com/susmithamannem004/Jobhub-AI)
 
----
+## Overview
 
-## 📋 Assessment Requirements Compliance Checklist
+JobHub AI is a polished career platform for developers built with a modern React frontend and Express backend. It helps users discover job opportunities, evaluate fit with AI, generate tailored cover letters, and manage application progress with a workflow-focused tracker.
 
-| # | Assessment Requirement | Status | Implementation Details |
-|---|---|---|---|
-| 1 | **Build web app with business value using AI** | ✅ **Achieved** | Built **JobHub AI**: Full-stack job board & candidate career platform featuring dual AI resume matching (TF-IDF & GPT-4o) and cover letter generation. |
-| 2 | **Push code to GIT** | ✅ **Achieved** | Source code fully committed & pushed to GitHub repository: [susmithamannem004/Jobhub-AI](https://github.com/susmithamannem004/Jobhub-AI). |
-| 3 | **Write CI/CD pipeline using AI on GIT** | ✅ **Achieved** | Automated GitHub Actions workflow configured in [.github/workflows/ci-cd.yml](file:///.github/workflows/ci-cd.yml) with client/server build audits. |
-| 4 | **Deploy to Vercel using CI/CD pipeline** | ✅ **Achieved** | Configured monorepo serverless deployment in [vercel.json](file:///vercel.json) & deployed to Vercel. |
-| 5 | **Write documentation using AI** | ✅ **Achieved** | Comprehensive architectural, REST API, setup, and deployment documentation written in `README.md`. |
-| 6 | **Send to reviewer** | 🟢 **Ready** | Repository and deployment links packaged for candidate submission. |
+## What it does
 
----
+- Search and filter job listings by title, location, employment type, and salary
+- Match resumes to opportunities using a hybrid AI engine
+- Generate personalized cover letters on demand
+- Track applications across stages with a Kanban-style board
+- Post new jobs and maintain listings using a lightweight JSON-backed datastore
+- Deploy seamlessly as a monorepo on Vercel
 
-## ✨ Key Features
+## Core Features
 
-- 🎯 **Job Discovery & Multi-Field Filtering**: Search tech roles by keyword, location, salary, and employment type.
-- ⚡ **Dual AI Skill Match Engine**:
-  - Uses **OpenAI GPT-4o** when an `OPENAI_API_KEY` is present.
-  - Automatically falls back to an offline **TF-IDF Keyword Heuristic Engine** (100% reliable without external API keys).
-- ✍️ **1-Click AI Cover Letter Generator**: Produce custom cover letters with download and copy capabilities.
-- 📊 **Kanban Application Tracker**: Track applied positions across pipeline stages (*Saved*, *Applied*, *Interviewing*, *Offer*, *Rejected*).
-- 💾 **Lightweight JSON Storage Engine**: No database setup required! Operates via thread-safe `fs/promises` reading and writing to structured JSON seed files.
-- ☁️ **Vercel Serverless Ready**: Integrated `vercel.json` for unified monorepo deployment.
-- 🛠️ **GitHub Actions CI/CD**: Automatic build verification workflow included in `.github/workflows/ci-cd.yml`.
+- **AI-driven fit scoring** using GPT-4o when available, with a robust TF-IDF fallback
+- **Dynamic job discovery** with keyword, location, and role-type filtering
+- **Cover letter generation** for faster candidate outreach
+- **Application tracking** from Saved to Offer
+- **Responsive UI** designed for modern desktop and mobile workflows
+- **Serverless deployment ready** with Vercel and GitHub Actions
 
----
+## Technology Stack
 
-## 📁 Repository Architecture
+- Frontend: **React 18**, **Vite**, **Tailwind CSS**, **React Router v6**
+- Backend: **Node.js**, **Express**, **Axios**
+- AI: **OpenAI GPT-4o** integration plus local TF-IDF fallback
+- Deployment: **Vercel serverless monorepo**
+- CI/CD: **GitHub Actions**
 
-```
+## Repository Structure
+
+```text
 JobHub-AI/
 ├── .github/
 │   └── workflows/
-│       └── ci-cd.yml          # GitHub Actions build & test workflow
-├── server/                    # Node.js + Express REST API
-│   ├── api/
-│   │   └── index.js           # Serverless Vercel function entry point
-│   ├── src/
-│   │   ├── config/            # Environment configuration
-│   │   ├── data/              # JSON database files (jobs.json, applications.json)
-│   │   ├── db/                # jsonStore helper module
-│   │   ├── services/          # Dual AI engine logic (TF-IDF + OpenAI fallback)
-│   │   ├── controllers/       # Job, AI, Application REST controllers
-│   │   ├── routes/            # REST API endpoints
-│   │   └── app.js             # Express app declaration
-│   ├── index.js               # Local server listener (Port 5000)
+│       └── ci-cd.yml              # GitHub Actions pipeline
+├── server/                        # Node.js + Express API
+│   ├── api/                       # Vercel serverless entry point
+│   ├── src/                       # Backend application code
+│   ├── data/                      # Seed job/application data
+│   ├── db/                        # JSON storage helper
+│   ├── services/                  # AI and business logic
+│   ├── controllers/               # API controllers
+│   ├── routes/                    # API route definitions
 │   └── package.json
-├── client/                    # React 18 + Vite SPA Frontend
-│   ├── src/
-│   │   ├── api/               # Axios API client services
-│   │   ├── components/        # UI components (Navbar, JobCard, ScoreMeter, KanbanBoard)
-│   │   ├── context/           # AppContext state provider
-│   │   ├── pages/             # HomePage, JobsPage, AIMatcherPage, TrackerPage
-│   │   ├── index.css          # Tailwind directives & glassmorphism theme
-│   │   └── main.jsx
-│   ├── vite.config.js
+├── client/                        # React + Vite frontend
+│   ├── src/                       # Application source files
+│   ├── index.html
+│   ├── package.json
 │   ├── tailwind.config.js
-│   └── package.json
-├── vercel.json                # Vercel deployment configuration
-└── README.md
+│   └── vite.config.js
+├── vercel.json                    # Vercel monorepo config
+├── PROJECT_STATUS.md              # Project summary and implementation notes
+└── README.md                      # Project documentation
 ```
 
----
+## Local Development
 
-## 🛠️ Quick Start Guide
-
-### 1. Install Dependencies
+### Install dependencies
 
 ```bash
-# Install root, server, and client packages
+git clone https://github.com/susmithamannem004/Jobhub-AI.git
+cd JobHub-AI
 npm run install:all
 ```
 
-### 2. Run Local Development Servers
+### Run the app
 
 ```bash
-# Terminal 1: Start Express Backend API (Port 5000)
 npm run dev:server
-
-# Terminal 2: Start React + Vite Frontend (Port 3000)
 npm run dev:client
 ```
 
-Open `http://localhost:3000` in your browser!
+Open **http://localhost:3000** in your browser.
 
----
+### Optional: Enable OpenAI
 
-## 🔌 REST API Reference
+Create a `.env` file inside `server/`:
 
-| Endpoint | Method | Description |
+```env
+OPENAI_API_KEY=your_openai_api_key
+```
+
+If no API key is provided, the application uses the offline TF-IDF matcher automatically.
+
+## API Endpoints
+
+| Method | Route | Purpose |
 |---|---|---|
-| `/api/jobs` | `GET` | Get filtered job listings (`?q=react&location=remote&type=full-time`) |
-| `/api/jobs/:id` | `GET` | Get specific job details |
-| `/api/jobs` | `POST` | Post a new job opportunity |
-| `/api/ai/match` | `POST` | Calculate resume fit score & missing skills |
-| `/api/ai/cover-letter` | `POST` | Generate tailored cover letter |
-| `/api/applications` | `GET` | List tracked candidate applications |
-| `/api/applications` | `POST` | Save job to candidate tracker |
-| `/api/applications/:id` | `PUT` | Update status/notes for application |
-| `/api/applications/:id` | `DELETE` | Remove application from tracker |
+| `GET` | `/api/health` | Health check |
+| `GET` | `/api/jobs` | Fetch job listings |
+| `GET` | `/api/jobs/:id` | Get a job by ID |
+| `POST` | `/api/jobs` | Create a job listing |
+| `POST` | `/api/ai/match` | Evaluate resume fit |
+| `POST` | `/api/ai/cover-letter` | Generate cover letter text |
+| `GET` | `/api/applications` | List saved applications |
+| `POST` | `/api/applications` | Save an application |
+| `PUT` | `/api/applications/:id` | Update application details |
+| `DELETE` | `/api/applications/:id` | Delete an application |
 
----
+## Deployment
 
-## 🌐 Deploy to Vercel
+This repository is configured for Vercel deployment with `vercel.json` and supports a monorepo layout. The GitHub Actions workflow validates both client and server builds and deploys updates automatically from the `main` branch.
 
-1. Push your repository to GitHub.
-2. Import the repository into [Vercel](https://vercel.com).
-3. Vercel automatically detects `vercel.json` and configures the `/api` Express serverless function alongside the React static frontend.
+## Live Demo
+
+[https://jobhub-ai-kohl.vercel.app](https://jobhub-ai-kohl.vercel.app)
+
+## Additional resources
+
+For architecture details and project status, see `PROJECT_STATUS.md`.
