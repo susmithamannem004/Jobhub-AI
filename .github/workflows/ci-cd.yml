@@ -50,21 +50,28 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v5
 
-      - name: Setup Node.js 24
+      - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
           node-version: 24
 
       - name: Install Vercel CLI
-        run: npm install -g vercel@latest
+        run: npm install -g vercel
 
-      - name: Deploy to Vercel (Production)
-        run: |
-          vercel --prod --token=${{ secrets.VERCEL_TOKEN }} \
-            --confirm \
-            --org=${{ secrets.VERCEL_ORG_ID }} \
-            --project=${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Pull Vercel Environment
+        run: vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+
+      - name: Build Project
+        run: vercel build --prod --token=$VERCEL_TOKEN
+
+      - name: Deploy Project
+        run: vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
