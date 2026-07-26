@@ -1,59 +1,64 @@
-name: GitHub Actions CI/CD Pipeline
+name: JobHub AI — CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main]
   pull_request:
-    branches: [ main, master ]
+    branches: [main]
 
 jobs:
+  # ─────────────────────────────────────────
+  # JOB 1: Build & Validate
+  # ─────────────────────────────────────────
   build-and-test:
+    name: Build & Validate
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v5
         with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: client/package.json
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/package-lock.json
 
       - name: Install Client Dependencies
-        run: |
-          cd client
-          npm ci
+        working-directory: client
+        run: npm ci
 
-      - name: Verify Client Build
-        run: |
-          cd client
-          npm run build
+      - name: Build React Client (Production)
+        working-directory: client
+        run: npm run build
 
       - name: Install Server Dependencies
-        run: |
-          cd server
-          npm ci
+        working-directory: server
+        run: npm ci
 
-      - name: Run Server Syntax & Health Audit
-        run: |
-          cd server
-          node --check index.js
+      - name: Validate Express Server Syntax
+        working-directory: server
+        run: node --check index.js
 
+  # ─────────────────────────────────────────
+  # JOB 2: Deploy to Vercel (main branch only)
+  # ─────────────────────────────────────────
   deploy-to-vercel:
+    name: Deploy to Vercel
     needs: build-and-test
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: Deploy to Vercel
+      - name: Deploy to Vercel (Production)
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
           working-directory: ./
-
