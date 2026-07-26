@@ -73,11 +73,11 @@ export const Navbar = () => {
               <Github className="w-4 h-4" />
             </a>
             <a
-              href="https://vercel.com/susmimannem67-5551s-projects/jobhub-ai"
+              href="https://jobhub-ai-kohl.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800 transition-colors"
-              title="View Vercel Dashboard"
+              title="View Live Demo"
             >
               <Globe className="w-4 h-4" />
             </a>

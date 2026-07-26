@@ -86,8 +86,9 @@ export const CoverLetterGen = ({ selectedJob }) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Candidate Full Name</label>
+          <label htmlFor="candidate-name" className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Candidate Full Name</label>
           <input
+            id="candidate-name"
             type="text"
             value={candidateName}
             onChange={(e) => setCandidateName(e.target.value)}
@@ -95,8 +96,9 @@ export const CoverLetterGen = ({ selectedJob }) => {
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Target Position</label>
+          <label htmlFor="target-position" className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Target Position</label>
           <input
+            id="target-position"
             type="text"
             disabled
             value={selectedJob ? `${selectedJob.title} @ ${selectedJob.company}` : 'Senior Full Stack Engineer'}

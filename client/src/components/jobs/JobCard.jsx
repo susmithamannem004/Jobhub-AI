@@ -20,9 +20,9 @@ export const JobCard = ({ job, onSelect, onMatchAI }) => {
   };
 
   return (
-    <div 
+    <div
       onClick={() => onSelect(job)}
-      className="glass-card glass-card-hover rounded-2xl p-6 cursor-pointer flex flex-col justify-between space-y-4 group relative"
+      className="glass-card glass-card-hover rounded-2xl p-6 cursor-pointer flex flex-col justify-between space-y-4 group relative text-left"
     >
       {/* Top Header */}
       <div className="flex items-start justify-between gap-4">
@@ -80,8 +80,8 @@ export const JobCard = ({ job, onSelect, onMatchAI }) => {
 
       {/* Tech Tags */}
       <div className="flex flex-wrap gap-1.5 pt-1">
-        {job.tags.slice(0, 4).map((tag, idx) => (
-          <Badge key={idx} variant="brand">{tag}</Badge>
+        {job.tags.slice(0, 4).map((tag) => (
+          <Badge key={tag} variant="brand">{tag}</Badge>
         ))}
         {job.tags.length > 4 && (
           <Badge variant="default">+{job.tags.length - 4}</Badge>

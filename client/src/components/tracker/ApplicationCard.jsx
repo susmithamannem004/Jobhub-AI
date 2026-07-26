@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Trash2, Edit2, Check, X, Building, Tag } from 'lucide-react';
+import { Calendar, Trash2, Edit2, Check, X, Building } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export const ApplicationCard = ({ app }) => {
@@ -93,15 +93,16 @@ export const ApplicationCard = ({ app }) => {
             </div>
           </div>
         ) : (
-          <div 
+          <button
+            type="button"
             onClick={() => setIsEditingNotes(true)}
-            className="group/notes cursor-pointer flex items-center justify-between text-xs text-slate-400 hover:text-slate-200"
+            className="group/notes cursor-pointer flex items-center justify-between text-xs text-slate-400 hover:text-slate-200 w-full text-left"
           >
             <p className="line-clamp-2 text-[11px] italic">
               {app.notes || 'Click to add notes...'}
             </p>
             <Edit2 className="w-3 h-3 text-slate-600 group-hover/notes:text-brand-400 opacity-0 group-hover/notes:opacity-100 transition-opacity ml-1 shrink-0" />
-          </div>
+          </button>
         )}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { appsApi } from '../api/appsApi';
 
 const AppContext = createContext();
@@ -6,6 +6,7 @@ const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [applications, setApplications] = useState([]);
   const [loadingApps, setLoadingApps] = useState(false);
+  const [jobRefreshSignal, setJobRefreshSignal] = useState(0);
   const [resumeText, setResumeText] = useState(() => {
     return localStorage.getItem('jobhub_user_resume') || 
 `Senior Full Stack Engineer with 4+ years of hands-on experience building web applications using React, Node.js, Express, TypeScript, and Tailwind CSS. Proficient in REST API design, state management, Vite, Axios, CI/CD pipelines (GitHub Actions, Vercel), and automated testing. Dedicated to clean code architecture and crafting responsive user interfaces.`;
@@ -19,7 +20,7 @@ export const AppProvider = ({ children }) => {
   }, [resumeText]);
 
   // Fetch applications
-  const fetchApplications = async () => {
+  const fetchApplications = useCallback(async () => {
     setLoadingApps(true);
     try {
       const res = await appsApi.getApplications();
@@ -31,22 +32,26 @@ export const AppProvider = ({ children }) => {
     } finally {
       setLoadingApps(false);
     }
-  };
+  }, []);
+
+  const notifyJobPosted = useCallback(() => {
+    setJobRefreshSignal((prev) => prev + 1);
+  }, []);
 
   useEffect(() => {
     fetchApplications();
-  }, []);
+  }, [fetchApplications]);
 
-  const showToast = (message, type = 'success') => {
+  const showToast = useCallback((message, type = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 4000);
-  };
+  }, []);
 
-  const addApplication = async (appData) => {
+  const addApplication = useCallback(async (appData) => {
     try {
       const res = await appsApi.createApplication(appData);
       if (res.success) {
-        setApplications(prev => [res.data, ...prev]);
+        setApplications((prev) => [res.data, ...prev]);
         showToast(`Saved ${res.data.jobTitle} to Tracker!`, 'success');
         return res.data;
       }
@@ -54,45 +59,49 @@ export const AppProvider = ({ children }) => {
       showToast(err.message, 'error');
       throw err;
     }
-  };
+  }, [showToast]);
 
-  const updateAppStatus = async (id, status, notes) => {
+  const updateAppStatus = useCallback(async (id, status, notes) => {
     try {
       const res = await appsApi.updateApplication(id, { status, notes });
       if (res.success) {
-        setApplications(prev => prev.map(a => a.id === id ? res.data : a));
+        setApplications((prev) => prev.map((a) => (a.id === id ? res.data : a)));
         showToast('Application updated', 'success');
       }
     } catch (err) {
       showToast(err.message, 'error');
     }
-  };
+  }, [showToast]);
 
-  const removeApplication = async (id) => {
+  const removeApplication = useCallback(async (id) => {
     try {
       const res = await appsApi.deleteApplication(id);
       if (res.success) {
-        setApplications(prev => prev.filter(a => a.id !== id));
+        setApplications((prev) => prev.filter((a) => a.id !== id));
         showToast('Application removed from pipeline', 'info');
       }
     } catch (err) {
       showToast(err.message, 'error');
     }
-  };
+  }, [showToast]);
+
+  const providerValue = useMemo(() => ({
+    applications,
+    loadingApps,
+    fetchApplications,
+    addApplication,
+    updateAppStatus,
+    removeApplication,
+    resumeText,
+    setResumeText,
+    toast,
+    showToast,
+    jobRefreshSignal,
+    notifyJobPosted
+  }), [applications, loadingApps, resumeText, toast, jobRefreshSignal, fetchApplications, addApplication, updateAppStatus, removeApplication, showToast, notifyJobPosted]);
 
   return (
-    <AppContext.Provider value={{
-      applications,
-      loadingApps,
-      fetchApplications,
-      addApplication,
-      updateAppStatus,
-      removeApplication,
-      resumeText,
-      setResumeText,
-      toast,
-      showToast
-    }}>
+    <AppContext.Provider value={providerValue}>
       {children}
     </AppContext.Provider>
   );

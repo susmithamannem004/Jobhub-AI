@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jobsApi } from '../api/jobsApi';
+import { useApp } from '../context/AppContext';
 import { JobFilter } from '../components/jobs/JobFilter';
 import { JobCard } from '../components/jobs/JobCard';
 import { JobDetailModal } from '../components/jobs/JobDetailModal';
@@ -18,6 +19,8 @@ export const JobsPage = () => {
     type: 'All'
   });
 
+  const { jobRefreshSignal } = useApp();
+
   const fetchJobs = async () => {
     setLoading(true);
     try {
@@ -34,7 +37,7 @@ export const JobsPage = () => {
 
   useEffect(() => {
     fetchJobs();
-  }, [filters]);
+  }, [filters, jobRefreshSignal]);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));

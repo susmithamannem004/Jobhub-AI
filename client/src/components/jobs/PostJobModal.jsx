@@ -5,7 +5,7 @@ import { useApp } from '../../context/AppContext';
 import { PlusCircle, Loader2 } from 'lucide-react';
 
 export const PostJobModal = ({ isOpen, onClose, onJobPosted }) => {
-  const { showToast } = useApp();
+  const { showToast, notifyJobPosted } = useApp();
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -42,6 +42,7 @@ export const PostJobModal = ({ isOpen, onClose, onJobPosted }) => {
       if (res.success) {
         showToast('Job listing posted successfully!', 'success');
         if (onJobPosted) onJobPosted(res.data);
+        notifyJobPosted();
         onClose();
         setFormData({
           title: '',
@@ -66,8 +67,9 @@ export const PostJobModal = ({ isOpen, onClose, onJobPosted }) => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Job Title *</label>
+            <label htmlFor="job-title" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Job Title *</label>
             <input
+              id="job-title"
               type="text"
               required
               placeholder="e.g. Senior Full Stack Engineer"
@@ -78,8 +80,9 @@ export const PostJobModal = ({ isOpen, onClose, onJobPosted }) => {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Company Name *</label>
+            <label htmlFor="company-name" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Company Name *</label>
             <input
+              id="company-name"
               type="text"
               required
               placeholder="e.g. TechCorp Innovations"
@@ -92,8 +95,9 @@ export const PostJobModal = ({ isOpen, onClose, onJobPosted }) => {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Location</label>
+            <label htmlFor="job-location" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Location</label>
             <input
+              id="job-location"
               type="text"
               placeholder="Remote / San Francisco"
               value={formData.location}
@@ -103,8 +107,9 @@ export const PostJobModal = ({ isOpen, onClose, onJobPosted }) => {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Employment Type</label>
+            <label htmlFor="employment-type" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Employment Type</label>
             <select
+              id="employment-type"
               value={formData.type}
               onChange={(e) => handleChange('type', e.target.value)}
               className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-sm focus:border-brand-500 focus:outline-none cursor-pointer"
@@ -116,8 +121,9 @@ export const PostJobModal = ({ isOpen, onClose, onJobPosted }) => {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Salary Range</label>
+            <label htmlFor="salary-range" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Salary Range</label>
             <input
+              id="salary-range"
               type="text"
               placeholder="$120,000 - $150,000"
               value={formData.salary}
@@ -128,8 +134,9 @@ export const PostJobModal = ({ isOpen, onClose, onJobPosted }) => {
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Tech Stack Tags (Comma separated)</label>
+          <label htmlFor="tech-tags" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Tech Stack Tags (Comma separated)</label>
           <input
+            id="tech-tags"
             type="text"
             placeholder="React, Node.js, Express, Tailwind CSS, TypeScript"
             value={formData.tags}
@@ -139,8 +146,9 @@ export const PostJobModal = ({ isOpen, onClose, onJobPosted }) => {
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Job Description *</label>
+          <label htmlFor="job-description" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Job Description *</label>
           <textarea
+            id="job-description"
             rows={3}
             required
             placeholder="Describe the job position, team environment, and core duties..."
@@ -151,8 +159,9 @@ export const PostJobModal = ({ isOpen, onClose, onJobPosted }) => {
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Requirements (One per line)</label>
+          <label htmlFor="job-requirements" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Requirements (One per line)</label>
           <textarea
+            id="job-requirements"
             rows={3}
             placeholder="3+ years React & Node.js experience&#10;Strong understanding of REST APIs&#10;Experience with Tailwind CSS"
             value={formData.requirements}
