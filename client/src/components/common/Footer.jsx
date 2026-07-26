@@ -25,13 +25,13 @@ export const Footer = () => {
             <span>GitHub Repository</span>
           </a>
           <a
-            href="https://vercel.com/susmimannem67-5551s-projects/jobhub-ai"
+            href="https://jobhub-ai-kohl.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center space-x-1.5 hover:text-white transition-colors"
           >
             <Globe className="w-4 h-4" />
-            <span>Vercel Dashboard</span>
+            <span>Live Demo</span>
           </a>
         </div>
       </div>

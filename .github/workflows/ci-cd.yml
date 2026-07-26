@@ -59,11 +59,12 @@ jobs:
         with:
           node-version: 24
 
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
       - name: Deploy to Vercel (Production)
-        uses: amondnet/vercel-action@v27
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: "--prod"
-          working-directory: ./
+        run: |
+          vercel --prod --token=${{ secrets.VERCEL_TOKEN }} \
+            --confirm \
+            --org=${{ secrets.VERCEL_ORG_ID }} \
+            --project=${{ secrets.VERCEL_PROJECT_ID }}
