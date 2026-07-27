@@ -1,6 +1,9 @@
 import { readJson, writeJson } from '../db/jsonStore.js';
+import { config } from '../config/index.js';
 
 const JOBS_FILE = 'jobs.json';
+const isProd = config.env === 'production';
+const IS_VERCEL = process.env.VERCEL === '1' || process.env.VERCEL_ENV !== undefined;
 
 export async function getJobs(req, res) {
   try {
@@ -9,34 +12,28 @@ export async function getJobs(req, res) {
 
     if (q) {
       const term = q.toLowerCase();
-      jobs = jobs.filter(j => 
+      jobs = jobs.filter(j =>
         j.title.toLowerCase().includes(term) ||
         j.company.toLowerCase().includes(term) ||
         j.tags.some(t => t.toLowerCase().includes(term)) ||
         j.description.toLowerCase().includes(term)
       );
     }
-
     if (location) {
       const locTerm = location.toLowerCase();
       jobs = jobs.filter(j => j.location.toLowerCase().includes(locTerm));
     }
-
     if (type && type !== 'All') {
       jobs = jobs.filter(j => j.type.toLowerCase() === type.toLowerCase());
     }
-
     if (experience && experience !== 'All') {
       jobs = jobs.filter(j => j.experience.toLowerCase().includes(experience.toLowerCase()));
     }
 
-    res.json({
-      success: true,
-      count: jobs.length,
-      data: jobs
-    });
+    res.json({ success: true, count: jobs.length, data: jobs });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Failed to retrieve job listings', error: error.message });
+    console.error('[getJobs]', error);
+    res.status(500).json({ success: false, message: isProd ? 'Failed to retrieve job listings' : error.message });
   }
 }
 
@@ -45,14 +42,11 @@ export async function getJobById(req, res) {
     const { id } = req.params;
     const jobs = await readJson(JOBS_FILE);
     const job = jobs.find(j => j.id === id);
-
-    if (!job) {
-      return res.status(404).json({ success: false, message: 'Job not found' });
-    }
-
+    if (!job) return res.status(404).json({ success: false, message: 'Job not found' });
     res.json({ success: true, data: job });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Failed to fetch job details', error: error.message });
+    console.error('[getJobById]', error);
+    res.status(500).json({ success: false, message: isProd ? 'Failed to fetch job details' : error.message });
   }
 }
 
@@ -64,7 +58,6 @@ export async function createJob(req, res) {
       return res.status(400).json({ success: false, message: 'Title, company, and description are required fields' });
     }
 
-    const jobs = await readJson(JOBS_FILE);
     const newJob = {
       id: `job-${Date.now()}`,
       title,
@@ -77,14 +70,22 @@ export async function createJob(req, res) {
       postedAt: new Date().toISOString(),
       tags: Array.isArray(tags) ? tags : (tags ? tags.split(',').map(t => t.trim()) : ['React', 'Node.js']),
       description,
-      requirements: Array.isArray(requirements) ? requirements : (typeof requirements === 'string' ? requirements.split('\n').filter(Boolean) : [description])
+      requirements: Array.isArray(requirements)
+        ? requirements
+        : (typeof requirements === 'string' ? requirements.split('\n').filter(Boolean) : [description])
     };
 
-    jobs.unshift(newJob);
-    await writeJson(JOBS_FILE, jobs);
+    if (!IS_VERCEL) {
+      const jobs = await readJson(JOBS_FILE);
+      jobs.unshift(newJob);
+      await writeJson(JOBS_FILE, jobs);
+    } else {
+      console.log('[jobController] Demo mode — job created in-memory only, not persisted');
+    }
 
-    res.status(201).json({ success: true, data: newJob });
+    res.status(201).json({ success: true, data: newJob, demo: IS_VERCEL || undefined });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Failed to create job listing', error: error.message });
+    console.error('[createJob]', error);
+    res.status(500).json({ success: false, message: isProd ? 'Failed to create job listing' : error.message });
   }
 }

@@ -5,6 +5,8 @@ node_modules/
 # Build outputs
 dist/
 build/
+
+# Vercel
 .vercel/
 
 # Logs & Environment
@@ -12,12 +14,10 @@ build/
 .env
 .env.local
 .env.production
+.env.*.local
 
 # IDE & System
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
-
-.vercel
-.env*

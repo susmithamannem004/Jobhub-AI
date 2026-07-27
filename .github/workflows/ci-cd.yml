@@ -7,23 +7,22 @@ on:
     branches: [main]
 
 jobs:
-  # ─────────────────────────────────────────
-  # JOB 1: Build & Validate
-  # ─────────────────────────────────────────
   build-and-test:
     name: Build & Validate
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js 24
-        uses: actions/setup-node@v5
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 20
           cache: npm
-          cache-dependency-path: client/package-lock.json
+          cache-dependency-path: |
+            client/package-lock.json
+            server/package-lock.json
 
       - name: Install Client Dependencies
         working-directory: client
@@ -32,6 +31,8 @@ jobs:
       - name: Build React Client (Production)
         working-directory: client
         run: npm run build
+        env:
+          NODE_ENV: production
 
       - name: Install Server Dependencies
         working-directory: server
@@ -39,11 +40,8 @@ jobs:
 
       - name: Validate Express Server Syntax
         working-directory: server
-        run: node --check index.js
+        run: node --check src/app.js && node --check index.js
 
-  # ─────────────────────────────────────────
-  # JOB 2: Deploy to Vercel (main branch only)
-  # ─────────────────────────────────────────
   deploy-to-vercel:
     name: Deploy to Vercel
     needs: build-and-test
@@ -57,12 +55,12 @@ jobs:
 
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 20
 
       - name: Install Vercel CLI
         run: npm install -g vercel

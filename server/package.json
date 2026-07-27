@@ -4,6 +4,9 @@
   "description": "Express Backend REST API with JSON DB & AI matching for JobHub AI",
   "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js"
@@ -11,7 +14,6 @@
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "jobhub-ai": "file:.."
+    "express": "^4.19.2"
   }
 }

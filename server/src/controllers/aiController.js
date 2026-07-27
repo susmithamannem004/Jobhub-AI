@@ -1,7 +1,9 @@
 import { readJson } from '../db/jsonStore.js';
 import { analyzeResumeFit, generateCoverLetter } from '../services/aiService.js';
+import { config } from '../config/index.js';
 
 const JOBS_FILE = 'jobs.json';
+const isProd = config.env === 'production';
 
 /**
  * POST /api/ai/match
@@ -32,17 +34,11 @@ export async function matchResume(req, res) {
       }
     }
 
-    const result = await analyzeResumeFit({
-      ...targetJob,
-      resumeText
-    });
-
-    res.json({
-      success: true,
-      data: result
-    });
+    const result = await analyzeResumeFit({ ...targetJob, resumeText });
+    res.json({ success: true, data: result });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'AI match analysis failed', error: error.message });
+    console.error('[matchResume]', error);
+    res.status(500).json({ success: false, message: isProd ? 'AI match analysis failed' : error.message });
   }
 }
 
@@ -63,25 +59,14 @@ export async function generateCover(req, res) {
       const jobs = await readJson(JOBS_FILE);
       const found = jobs.find(j => j.id === jobId);
       if (found) {
-        target = {
-          jobTitle: found.title,
-          company: found.company,
-          jobDescription: found.description
-        };
+        target = { jobTitle: found.title, company: found.company, jobDescription: found.description };
       }
     }
 
-    const result = await generateCoverLetter({
-      ...target,
-      candidateName,
-      resumeText
-    });
-
-    res.json({
-      success: true,
-      data: result
-    });
+    const result = await generateCoverLetter({ ...target, candidateName, resumeText });
+    res.json({ success: true, data: result });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Cover letter generation failed', error: error.message });
+    console.error('[generateCover]', error);
+    res.status(500).json({ success: false, message: isProd ? 'Cover letter generation failed' : error.message });
   }
 }

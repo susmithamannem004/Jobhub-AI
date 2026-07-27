@@ -2,11 +2,16 @@
   "name": "jobhub-ai",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "JobHub AI - AI-Powered Job Matching & Career Assistant Platform",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev:server": "cd server && npm run dev",
     "dev:client": "cd client && npm run dev",
     "install:all": "cd server && npm install && cd ../client && npm install",
-    "build:client": "cd client && npm run build"
+    "build:client": "cd client && npm run build",
+    "start": "cd server && npm start"
   }
 }

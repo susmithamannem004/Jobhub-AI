@@ -1,8 +1,9 @@
 import axios from 'axios';
 
-// Create central Axios instance
+// In production on Vercel, frontend and API share the same domain.
+// In development, Vite proxy forwards /api -> localhost:5000.
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: {
     'Content-Type': 'application/json'
   },
