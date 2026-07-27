@@ -11,6 +11,7 @@ export const JobsPage = () => {
   const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(null);
   const [selectedJob, setSelectedJob] = useState(null);
 
   const [filters, setFilters] = useState({
@@ -23,13 +24,17 @@ export const JobsPage = () => {
 
   const fetchJobs = async () => {
     setLoading(true);
+    setFetchError(null);
     try {
       const res = await jobsApi.getJobs(filters);
       if (res.success) {
         setJobs(res.data);
+      } else {
+        setFetchError('The server returned an unexpected response.');
       }
     } catch (err) {
       console.error('Failed to load jobs:', err);
+      setFetchError(err.message || 'Failed to load job listings.');
     } finally {
       setLoading(false);
     }
@@ -94,7 +99,20 @@ export const JobsPage = () => {
             ))}
           </div>
 
-          {jobs.length === 0 && (
+          {fetchError && (
+            <div className="glass-card rounded-2xl p-12 text-center border border-rose-800/50 space-y-3">
+              <p className="text-base font-bold text-rose-400">Failed to load job listings</p>
+              <p className="text-xs text-slate-400">{fetchError}</p>
+              <button
+                onClick={fetchJobs}
+                className="px-4 py-2 text-xs font-bold rounded-xl bg-brand-600 text-white"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          {!fetchError && jobs.length === 0 && (
             <div className="glass-card rounded-2xl p-12 text-center border border-slate-800 space-y-3">
               <p className="text-base font-bold text-white">No jobs found matching your criteria</p>
               <p className="text-xs text-slate-400">Try adjusting your keyword, location, or employment type filter.</p>
