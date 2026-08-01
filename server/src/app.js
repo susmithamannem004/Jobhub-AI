@@ -7,6 +7,23 @@ import { config } from './config/index.js';
 
 const app = express();
 
+// Simple API key middleware for mutating endpoints (minimal, opt-in)
+function apiKeyAuth(req, res, next) {
+  const apiKey = process.env.API_KEY || '';
+  // If no API key configured, do not enforce (development-friendly)
+  if (!apiKey) return next();
+
+  // Only protect state-changing methods
+  const mutating = ['POST', 'PUT', 'DELETE'];
+  if (!mutating.includes(req.method)) return next();
+
+  const header = req.headers['x-api-key'] || req.headers['authorization'];
+  if (!header) return res.status(401).json({ success: false, message: 'API key required' });
+  const token = header.startsWith('Bearer ') ? header.slice(7) : header;
+  if (token !== apiKey) return res.status(403).json({ success: false, message: 'Invalid API key' });
+  next();
+}
+
 // CORS — allow same-origin (no Origin header = Vercel frontend→API on same domain),
 // localhost dev, and any explicitly configured CLIENT_URL.
 const corsOptions = {
@@ -22,8 +39,8 @@ const corsOptions = {
     ];
     if (config.clientUrl) allowed.push(config.clientUrl);
 
-    // Allow any vercel.app subdomain for preview deployments
-    if (origin.endsWith('.vercel.app') || allowed.includes(origin)) {
+    // Only allow explicitly listed origins (remove broad vercel.app wildcard)
+    if (allowed.includes(origin)) {
       return callback(null, true);
     }
 
@@ -34,7 +51,7 @@ const corsOptions = {
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key']
 };
 
 // In-memory rate limiter for AI endpoints (20 req/min per IP)
@@ -67,6 +84,9 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ limit: '5mb', extended: true }));
 app.use(requestLogger);
+
+// Apply API key auth globally (protects mutating HTTP methods)
+app.use(apiKeyAuth);
 
 // Health check
 app.get('/api/health', (req, res) => {

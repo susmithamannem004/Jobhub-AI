@@ -45,11 +45,18 @@ export const CoverLetterGen = ({ selectedJob }) => {
     if (!coverLetter) return;
     const element = document.createElement('a');
     const file = new Blob([coverLetter], { type: 'text/plain' });
-    element.href = URL.createObjectURL(file);
+    const fileUrl = URL.createObjectURL(file);
+    element.href = fileUrl;
     element.download = `Cover_Letter_${(selectedJob?.company || 'Company').replace(/\s+/g, '_')}.txt`;
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
+    // Revoke the object URL to avoid memory leaks
+    try {
+      setTimeout(() => URL.revokeObjectURL(fileUrl), 100);
+    } catch (e) {
+      // ignore
+    }
   };
 
   return (

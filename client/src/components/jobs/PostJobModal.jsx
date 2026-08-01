@@ -4,7 +4,7 @@ import { jobsApi } from '../../api/jobsApi';
 import { useApp } from '../../context/AppContext';
 import { PlusCircle, Loader2 } from 'lucide-react';
 
-export const PostJobModal = ({ isOpen, onClose, onJobPosted }) => {
+export const PostJobModal = ({ isOpen, onClose }) => {
   const { showToast, notifyJobPosted } = useApp();
   const [loading, setLoading] = useState(false);
 
@@ -41,7 +41,6 @@ export const PostJobModal = ({ isOpen, onClose, onJobPosted }) => {
       const res = await jobsApi.createJob(payload);
       if (res.success) {
         showToast('Job listing posted successfully!', 'success');
-        if (onJobPosted) onJobPosted(res.data);
         notifyJobPosted();
         onClose();
         setFormData({

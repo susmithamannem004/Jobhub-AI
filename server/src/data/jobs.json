@@ -1,5 +1,24 @@
 [
   {
+    "id": "job-1785559977271",
+    "title": "AI engineer",
+    "company": "TCS",
+    "logo": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&auto=format&fit=crop&q=80",
+    "location": "Remote",
+    "type": "Full-time",
+    "experience": "Mid Level",
+    "salary": "$120,000 - $150,000 / year",
+    "postedAt": "2026-08-01T04:52:57.271Z",
+    "tags": [
+      "React",
+      "Node.js",
+      "Express",
+      "Tailwind CSS"
+    ],
+    "description": "egfuybwheds",
+    "requirements": []
+  },
+  {
     "id": "job-101",
     "title": "Senior React & Node.js Engineer",
     "company": "TechPulse Systems",
@@ -9,7 +28,14 @@
     "experience": "Senior Level",
     "salary": "$135,000 - $160,000 / year",
     "postedAt": "2026-07-24T10:00:00Z",
-    "tags": ["React", "Node.js", "Express", "Tailwind CSS", "TypeScript", "REST API"],
+    "tags": [
+      "React",
+      "Node.js",
+      "Express",
+      "Tailwind CSS",
+      "TypeScript",
+      "REST API"
+    ],
     "description": "TechPulse Systems is looking for a Senior Full Stack Engineer to lead the architecture and development of our next-gen candidate analytics dashboard. You will design scalable web applications using React, Express, and microservices.",
     "requirements": [
       "5+ years of experience with modern React, JavaScript (ES6+), and Node.js.",
@@ -29,7 +55,14 @@
     "experience": "Mid-Senior Level",
     "salary": "$145,000 - $175,000 / year",
     "postedAt": "2026-07-25T14:30:00Z",
-    "tags": ["React", "Python", "Node.js", "OpenAI API", "Vector DB", "Tailwind CSS"],
+    "tags": [
+      "React",
+      "Python",
+      "Node.js",
+      "OpenAI API",
+      "Vector DB",
+      "Tailwind CSS"
+    ],
     "description": "Join NeuralMind to build AI-assisted decision dashboards for enterprise recruiters. You will work on integrating LLM APIs, vector stores, and high-performance React client applications.",
     "requirements": [
       "3+ years experience with React, Node.js, and Python backend services.",
@@ -48,7 +81,14 @@
     "experience": "Lead",
     "salary": "$90 - $115 / hour",
     "postedAt": "2026-07-26T06:15:00Z",
-    "tags": ["React", "Vite", "Tailwind CSS", "Redux", "UX Design", "Framer Motion"],
+    "tags": [
+      "React",
+      "Vite",
+      "Tailwind CSS",
+      "Redux",
+      "UX Design",
+      "Framer Motion"
+    ],
     "description": "We are seeking a Frontend Lead to craft stunning user experiences for client web apps. You will establish design token systems, craft fluid animations, and mentor junior engineers.",
     "requirements": [
       "6+ years frontend software development experience.",
@@ -67,7 +107,14 @@
     "experience": "Mid Level",
     "salary": "$120,000 - $140,000 / year",
     "postedAt": "2026-07-23T09:00:00Z",
-    "tags": ["Node.js", "Express", "REST API", "JSON File DB", "Docker", "Vercel"],
+    "tags": [
+      "Node.js",
+      "Express",
+      "REST API",
+      "JSON File DB",
+      "Docker",
+      "Vercel"
+    ],
     "description": "DataBridge is expanding its core developer services team. You will build high-throughput Express REST APIs, manage lightweight data persistence layers, and set up deployment automation.",
     "requirements": [
       "3+ years experience with Node.js and Express RESTful Web Services.",
@@ -86,7 +133,14 @@
     "experience": "Junior / Entry",
     "salary": "$80,000 - $95,000 / year",
     "postedAt": "2026-07-26T01:00:00Z",
-    "tags": ["React", "JavaScript", "Express", "CSS", "Git", "Axios"],
+    "tags": [
+      "React",
+      "JavaScript",
+      "Express",
+      "CSS",
+      "Git",
+      "Axios"
+    ],
     "description": "Apex Software Labs is hiring an enthusiastic Junior Developer to contribute across our React frontend and Express backend. Great mentorship environment for early career talent!",
     "requirements": [
       "1+ years experience or portfolio of full-stack projects using React and Node.js.",

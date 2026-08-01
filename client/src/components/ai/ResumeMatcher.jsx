@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { aiApi } from '../../api/aiApi';
 import { ScoreMeter } from './ScoreMeter';
@@ -12,6 +12,17 @@ export const ResumeMatcher = ({ selectedJob }) => {
 
   const [customJobTitle, setCustomJobTitle] = useState(selectedJob ? selectedJob.title : '');
   const [customJobDesc, setCustomJobDesc] = useState(selectedJob ? selectedJob.description : '');
+
+  useEffect(() => {
+    if (selectedJob) {
+      setCustomJobTitle(selectedJob.title || '');
+      setCustomJobDesc(selectedJob.description || '');
+    } else {
+      // clear custom fields when no selected job
+      setCustomJobTitle('');
+      setCustomJobDesc('');
+    }
+  }, [selectedJob]);
 
   const handleRunMatch = async () => {
     if (!resumeText || resumeText.trim().length < 10) {
