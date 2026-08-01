@@ -28,7 +28,7 @@ function apiKeyAuth(req, res, next) {
 // localhost dev, and any explicitly configured CLIENT_URL.
 const corsOptions = {
   origin: (origin, callback) => {
-    // No origin = same-origin request (Vercel SSR, curl, server-to-server) — always allow
+    // No origin = same-origin request (Vercel frontend → API on same domain), curl, server-to-server — always allow
     if (!origin) return callback(null, true);
 
     const allowed = [
@@ -38,13 +38,14 @@ const corsOptions = {
       'http://localhost:5000'
     ];
     if (config.clientUrl) allowed.push(config.clientUrl);
+    if (process.env.URL) allowed.push(process.env.URL);
+    if (process.env.VERCEL_URL) allowed.push(`https://${process.env.VERCEL_URL}`);
 
-    // Only allow explicitly listed origins (remove broad vercel.app wildcard)
+    // Only allow explicitly listed origins
     if (allowed.includes(origin)) {
       return callback(null, true);
     }
 
-    // Return a 403-compatible error (status set on the error object)
     const err = new Error(`CORS: origin ${origin} not allowed`);
     err.status = 403;
     callback(err);
