@@ -1,7 +1,7 @@
 import app from './src/app.js';
 import { config } from './src/config/index.js';
 
-const PORT = process.env.PORT || 5000;
+const PORT = config.port;
 
 app.listen(PORT, () => {
   console.log(`🚀 JobHub AI REST Server running on http://localhost:${PORT}`);

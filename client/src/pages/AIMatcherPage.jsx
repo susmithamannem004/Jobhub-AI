@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ResumeMatcher } from '../components/ai/ResumeMatcher';
 import { CoverLetterGen } from '../components/ai/CoverLetterGen';
@@ -6,7 +6,27 @@ import { Sparkles } from 'lucide-react';
 
 export const AIMatcherPage = () => {
   const location = useLocation();
-  const selectedJob = location.state?.selectedJob || null;
+  const [selectedJob, setSelectedJob] = useState(null);
+
+  useEffect(() => {
+    const jobFromLocation = location.state?.selectedJob || null;
+    if (jobFromLocation) {
+      setSelectedJob(jobFromLocation);
+      try {
+        sessionStorage.setItem('selectedJob', JSON.stringify(jobFromLocation));
+      } catch (e) {
+        // ignore storage errors
+      }
+    } else {
+      // Try to restore from sessionStorage when not provided via navigation
+      try {
+        const stored = sessionStorage.getItem('selectedJob');
+        if (stored) setSelectedJob(JSON.parse(stored));
+      } catch (e) {
+        // ignore parse/storage errors
+      }
+    }
+  }, [location.state]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">

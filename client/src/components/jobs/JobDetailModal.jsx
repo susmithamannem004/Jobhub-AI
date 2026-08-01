@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal } from '../common/Modal';
 import { Badge } from '../common/Badge';
-import { MapPin, Briefcase, DollarSign, Sparkles, CheckCircle2, Bookmark, ExternalLink } from 'lucide-react';
+import { MapPin, Briefcase, DollarSign, Sparkles, CheckCircle2, Bookmark } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export const JobDetailModal = ({ job, isOpen, onClose, onMatchAI }) => {

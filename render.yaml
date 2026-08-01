@@ -1,3 +1,5 @@
+# DEPRECATED: This Render configuration is kept for reference only.
+# Use `vercel.json` (Vercel) or documented deployment pipelines instead.
 services:
   - type: web
     name: jobhub-ai-server
