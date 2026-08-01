@@ -4,9 +4,7 @@
   "outputDirectory": "client/dist",
   "functions": {
     "api/index.js": {
-      "includeFiles": [
-        "server/src/**"
-      ]
+      "includeFiles": "server/src/**"
     }
   },
   "rewrites": [
