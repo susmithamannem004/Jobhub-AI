@@ -4,6 +4,10 @@ import jobRoutes from './routes/jobRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import appRoutes from './routes/appRoutes.js';
 import { config } from './config/index.js';
+import errorHandler from './middleware/errorHandler.js';
+import { info } from './utils/logger.js';
+import path from 'path';
+import fs from 'fs';
 
 const app = express();
 
@@ -28,7 +32,7 @@ function apiKeyAuth(req, res, next) {
 // localhost dev, and any explicitly configured CLIENT_URL.
 const corsOptions = {
   origin: (origin, callback) => {
-    // No origin = same-origin request (Vercel SSR, curl, server-to-server) — always allow
+    // No origin = same-origin request (Vercel frontend → API on same domain), curl, server-to-server — always allow
     if (!origin) return callback(null, true);
 
     const allowed = [
@@ -38,13 +42,14 @@ const corsOptions = {
       'http://localhost:5000'
     ];
     if (config.clientUrl) allowed.push(config.clientUrl);
+    if (process.env.URL) allowed.push(process.env.URL);
+    if (process.env.VERCEL_URL) allowed.push(`https://${process.env.VERCEL_URL}`);
 
-    // Only allow explicitly listed origins (remove broad vercel.app wildcard)
+    // Only allow explicitly listed origins
     if (allowed.includes(origin)) {
       return callback(null, true);
     }
 
-    // Return a 403-compatible error (status set on the error object)
     const err = new Error(`CORS: origin ${origin} not allowed`);
     err.status = 403;
     callback(err);
@@ -75,14 +80,21 @@ function aiRateLimit(req, res, next) {
 }
 
 // Request logger
+// Add a request id and structured request logging
+function requestId(req, _res, next) {
+  req.requestId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
+  next();
+}
+
 function requestLogger(req, _res, next) {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  info(`${req.method} ${req.originalUrl}`, { requestId: req.requestId });
   next();
 }
 
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ limit: '5mb', extended: true }));
+app.use(requestId);
 app.use(requestLogger);
 
 // Apply API key auth globally (protects mutating HTTP methods)
@@ -98,6 +110,52 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Root welcome route to avoid confusing 404s on '/'
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    service: 'JobHub AI REST API',
+    routes: ['/api/health', '/api/jobs', '/api/ai/cover-letter', '/api/ai/match', '/api/ai/match-pdf']
+  });
+});
+
+// Serve client static files (prefer built `dist` if present)
+try {
+  const clientDir = path.resolve(__dirname, '../../client');
+  const distDir = path.join(clientDir, 'dist');
+  const serveDir = fs.existsSync(distDir) ? distDir : clientDir;
+  app.use(express.static(serveDir));
+
+  // SPA fallback: serve index.html for GET requests not handled by API
+  app.get('*', (req, res, next) => {
+    if (req.originalUrl.startsWith('/api/')) return next();
+    const indexPath = path.join(serveDir, 'index.html');
+    if (fs.existsSync(indexPath)) return res.sendFile(indexPath);
+    return next();
+  });
+} catch (err) {
+  info('Static client serve skipped:', err.message);
+}
+
+// Minimal OpenAPI JSON and Swagger UI viewer (no extra deps)
+const openApiSpec = {
+  openapi: '3.0.0',
+  info: { title: 'JobHub AI API', version: '1.0.0' },
+  paths: {
+    '/api/health': { get: { summary: 'Health check' } },
+    '/api/jobs': { get: { summary: 'List jobs' } },
+    '/api/ai/cover-letter': { post: { summary: 'Generate cover letter' } },
+    '/api/ai/match': { post: { summary: 'Match resume to job' } },
+    '/api/ai/match-pdf': { post: { summary: 'Match resume PDF' } }
+  }
+};
+
+app.get('/api/docs', (_req, res) => res.json(openApiSpec));
+
+app.get('/api/docs/ui', (_req, res) => {
+  res.type('html').send(`<!doctype html><html><head><title>API Docs</title><link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@4/swagger-ui.css"></head><body><div id="swagger"></div><script src="https://unpkg.com/swagger-ui-dist@4/swagger-ui-bundle.js"></script><script>window.onload=function(){SwaggerUIBundle({url:'/api/docs',dom_id:'#swagger'});};</script></body></html>`);
+});
+
 app.use('/api/jobs', jobRoutes);
 app.use('/api/ai', aiRateLimit, aiRoutes);
 app.use('/api/applications', appRoutes);
@@ -107,13 +165,7 @@ app.use((req, res) => {
   res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` });
 });
 
-// Global error handler
-app.use((err, req, res, _next) => {
-  console.error(`[ERROR] ${err.message}`, err.stack);
-  res.status(err.status || 500).json({
-    success: false,
-    message: config.env === 'production' ? 'Internal Server Error' : err.message
-  });
-});
+// Global error handler (centralized)
+app.use(errorHandler);
 
 export default app;

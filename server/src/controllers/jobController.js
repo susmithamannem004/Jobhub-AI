@@ -1,5 +1,6 @@
 import { readJson, writeJson } from '../db/jsonStore.js';
 import { config } from '../config/index.js';
+import { info, warn, error as logError } from '../utils/logger.js';
 
 const JOBS_FILE = 'jobs.json';
 const isProd = config.env === 'production';
@@ -13,10 +14,10 @@ export async function getJobs(req, res) {
     if (q) {
       const term = q.toLowerCase();
       jobs = jobs.filter(j =>
-        j.title.toLowerCase().includes(term) ||
-        j.company.toLowerCase().includes(term) ||
-        j.tags.some(t => t.toLowerCase().includes(term)) ||
-        j.description.toLowerCase().includes(term)
+        (j.title && j.title.toLowerCase().includes(term)) ||
+        (j.company && j.company.toLowerCase().includes(term)) ||
+        (Array.isArray(j.tags) && j.tags.some(t => String(t).toLowerCase().includes(term))) ||
+        (j.description && j.description.toLowerCase().includes(term))
       );
     }
     if (location) {
@@ -32,7 +33,7 @@ export async function getJobs(req, res) {
 
     res.json({ success: true, count: jobs.length, data: jobs });
   } catch (error) {
-    console.error('[getJobs]', error);
+    logError('[getJobs] error', error);
     res.status(500).json({ success: false, message: isProd ? 'Failed to retrieve job listings' : error.message });
   }
 }
@@ -41,11 +42,11 @@ export async function getJobById(req, res) {
   try {
     const { id } = req.params;
     const jobs = await readJson(JOBS_FILE);
-    const job = jobs.find(j => j.id === id);
+    const job = Array.isArray(jobs) ? jobs.find(j => j.id === id) : undefined;
     if (!job) return res.status(404).json({ success: false, message: 'Job not found' });
     res.json({ success: true, data: job });
   } catch (error) {
-    console.error('[getJobById]', error);
+    logError('[getJobById] error', error);
     res.status(500).json({ success: false, message: isProd ? 'Failed to fetch job details' : error.message });
   }
 }
@@ -80,12 +81,12 @@ export async function createJob(req, res) {
       jobs.unshift(newJob);
       await writeJson(JOBS_FILE, jobs);
     } else {
-      console.log('[jobController] Demo mode — job created in-memory only, not persisted');
+      info('[jobController] Demo mode — job created in-memory only, not persisted');
     }
 
     res.status(201).json({ success: true, data: newJob, demo: IS_VERCEL || undefined });
   } catch (error) {
-    console.error('[createJob]', error);
+    logError('[createJob] error', error);
     res.status(500).json({ success: false, message: isProd ? 'Failed to create job listing' : error.message });
   }
 }

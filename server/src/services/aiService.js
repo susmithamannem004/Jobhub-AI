@@ -1,4 +1,58 @@
 import { config } from '../config/index.js';
+import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
+import { warn, error as logError } from '../utils/logger.js';
+
+// Helper: fetch with timeout, basic retry for 429, and robust JSON parsing
+async function robustFetch(url, options = {}, { timeout = 8000, retries = 2 } = {}) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  let attempt = 0;
+  while (attempt <= retries) {
+    attempt += 1;
+    try {
+      const resp = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(id);
+      if (!resp.ok) {
+        // Retry on 429
+        if (resp.status === 429 && attempt <= retries) {
+          warn(`OpenAI rate limited (attempt ${attempt})`);
+          await new Promise(r => setTimeout(r, 500 * attempt));
+          continue;
+        }
+        const text = await resp.text().catch(() => '');
+        const err = new Error(`Upstream API returned ${resp.status}: ${text}`);
+        err.status = resp.status;
+        throw err;
+      }
+
+      const text = await resp.text().catch(() => null);
+      if (!text) return null;
+      try {
+        return JSON.parse(text);
+      } catch (parseErr) {
+        // Some OpenAI responses may include plain text — return raw text under a wrapper
+        return { rawText: text };
+      }
+    } catch (err) {
+      // AbortError means timeout
+      if (err.name === 'AbortError') {
+        if (attempt <= retries) {
+          warn('Fetch aborted due to timeout, retrying', attempt);
+          continue;
+        }
+        throw new Error('Request timed out');
+      }
+      // Network or other errors: retry a couple times
+      if (attempt <= retries) {
+        warn('Fetch error, retrying', err.message);
+        await new Promise(r => setTimeout(r, 250 * attempt));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error('Failed to fetch after retries');
+}
 
 const TECH_SKILLS_TAXONOMY = [
   'React', 'Node.js', 'Express', 'JavaScript', 'TypeScript', 'Tailwind CSS',
@@ -7,6 +61,37 @@ const TECH_SKILLS_TAXONOMY = [
   'Docker', 'Kubernetes', 'AWS', 'Vercel', 'CI/CD', 'GitHub Actions', 'Git',
   'Unit Testing', 'Jest', 'Cypress', 'Framer Motion', 'System Design', 'Agile'
 ];
+
+export async function parseResumePdf(buffer) {
+  try {
+    if (!buffer || !Buffer.isBuffer(buffer)) {
+      throw new Error('Invalid PDF buffer provided.');
+    }
+
+    const loadingTask = pdfjsLib.getDocument({ data: buffer, disableWorker: true });
+    const pdf = await loadingTask.promise;
+    const pageTexts = [];
+
+    for (let pageIndex = 1; pageIndex <= pdf.numPages; pageIndex += 1) {
+      const page = await pdf.getPage(pageIndex);
+      const content = await page.getTextContent();
+      const pageText = content.items.map(item => item.str).join(' ').trim();
+      if (pageText.length) {
+        pageTexts.push(pageText);
+      }
+    }
+
+    const text = pageTexts.join(' ').replace(/\s+/g, ' ').trim();
+    if (text.length < 20) {
+      throw new Error('Parsed PDF contains insufficient text.');
+    }
+
+    return text;
+  } catch (error) {
+    logError('parseResumePdf failed', error);
+    throw new Error(`Failed to extract text from PDF: ${error?.message || String(error)}`);
+  }
+}
 
 export async function analyzeResumeFit({ jobTitle = '', jobDescription = '', requirements = [], resumeText = '' }) {
   if (config.openaiApiKey) {
@@ -119,29 +204,50 @@ Description: ${jobDescription}
 Candidate Resume:
 ${resumeText}`;
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const body = JSON.stringify({
+    model: 'gpt-4o-mini',
+    messages: [{ role: 'user', content: prompt }],
+    // Keep response flexible; we'll parse text if JSON wrapper isn't present
+  });
+
+  const data = await robustFetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${config.openaiApiKey}`
     },
-    body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      messages: [{ role: 'user', content: prompt }],
-      response_format: { type: 'json_object' }
-    })
-  });
+    body
+  }, { timeout: 12000, retries: 2 });
 
-  if (!response.ok) {
-    throw new Error(`OpenAI API status ${response.status}`);
+  if (!data) throw new Error('Empty response from OpenAI');
+
+  // If the wrapper is present
+  if (data.choices && Array.isArray(data.choices) && data.choices[0]) {
+    const msg = data.choices[0].message?.content || data.choices[0].text || '';
+    // Try structured JSON first
+    try {
+      const parsed = typeof msg === 'string' ? JSON.parse(msg) : msg;
+      return { ...parsed, engine: 'OpenAI GPT-4o-mini' };
+    } catch (parseErr) {
+      // If we couldn't parse JSON, attempt to extract JSON substring
+      const jsonMatch = String(msg).match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        try {
+          const parsed = JSON.parse(jsonMatch[0]);
+          return { ...parsed, engine: 'OpenAI GPT-4o-mini' };
+        } catch (_) {
+          logError('OpenAI returned non-JSON message content');
+        }
+      }
+      throw new Error('OpenAI returned non-JSON response for analyzeWithOpenAI');
+    }
   }
 
-  const data = await response.json();
-  const parsed = JSON.parse(data.choices[0].message.content);
-  return {
-    ...parsed,
-    engine: 'OpenAI GPT-4o-mini'
-  };
+  // If openAI returned rawText wrapper
+  if (data.rawText) {
+    throw new Error('OpenAI returned unexpected response format');
+  }
+  throw new Error('Unexpected OpenAI response');
 }
 
 async function generateCoverLetterOpenAI({ jobTitle, company, jobDescription, candidateName, resumeText }) {
@@ -153,25 +259,27 @@ ${jobDescription}
 Resume:
 ${resumeText}`;
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const body = JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'user', content: prompt }] });
+
+  const data = await robustFetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${config.openaiApiKey}`
     },
-    body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
+    body
+  }, { timeout: 12000, retries: 2 });
 
-  if (!response.ok) {
-    throw new Error(`OpenAI API status ${response.status}`);
+  if (!data) throw new Error('Empty response from OpenAI');
+  if (!data.choices || !Array.isArray(data.choices) || !data.choices[0]) {
+    throw new Error('OpenAI returned unexpected choices format');
   }
 
-  const data = await response.json();
+  const content = data.choices[0].message?.content || data.choices[0].text || '';
+  if (!content) throw new Error('OpenAI returned empty message content');
+
   return {
-    coverLetter: data.choices[0].message.content.trim(),
+    coverLetter: String(content).trim(),
     engine: 'OpenAI GPT-4o-mini'
   };
 }
