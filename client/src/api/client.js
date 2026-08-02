@@ -4,9 +4,6 @@ import axios from 'axios';
 // In development, Vite proxy forwards /api -> localhost:5000.
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
-  headers: {
-    'Content-Type': 'application/json'
-  },
   timeout: 15000
 });
 

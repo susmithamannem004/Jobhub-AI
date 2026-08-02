@@ -1,5 +1,6 @@
 import { readJson, writeJson } from '../db/jsonStore.js';
 import { config } from '../config/index.js';
+import { info, warn, error as logError } from '../utils/logger.js';
 
 const APPS_FILE = 'applications.json';
 const JOBS_FILE = 'jobs.json';
@@ -15,7 +16,7 @@ export async function getApplications(req, res) {
     }
     res.json({ success: true, count: apps.length, data: apps });
   } catch (error) {
-    console.error('[getApplications]', error);
+    logError('[getApplications] error', error);
     res.status(500).json({ success: false, message: isProd ? 'Failed to retrieve applications' : error.message });
   }
 }
@@ -38,15 +39,15 @@ export async function createApplication(req, res) {
       }
       if (jobId && (!jobTitle || !company)) {
         const jobs = await readJson(JOBS_FILE);
-        const found = jobs.find(j => j.id === jobId);
-        if (found) { finalTitle = found.title; finalCompany = found.company; }
+        const found = Array.isArray(jobs) ? jobs.find(j => j.id === jobId) : undefined;
+        if (found) { finalTitle = found.title || finalTitle; finalCompany = found.company || finalCompany; }
       }
     } else {
-      console.log('[appController] Demo mode — application created in-memory only, not persisted');
+      info('[appController] Demo mode — application created in-memory only, not persisted');
       if (jobId && (!jobTitle || !company)) {
         const jobs = await readJson(JOBS_FILE);
-        const found = jobs.find(j => j.id === jobId);
-        if (found) { finalTitle = found.title; finalCompany = found.company; }
+        const found = Array.isArray(jobs) ? jobs.find(j => j.id === jobId) : undefined;
+        if (found) { finalTitle = found.title || finalTitle; finalCompany = found.company || finalCompany; }
       }
     }
 
@@ -69,7 +70,7 @@ export async function createApplication(req, res) {
 
     res.status(201).json({ success: true, data: newApp, demo: IS_VERCEL || undefined });
   } catch (error) {
-    console.error('[createApplication]', error);
+    logError('[createApplication] error', error);
     res.status(500).json({ success: false, message: isProd ? 'Failed to track application' : error.message });
   }
 }
@@ -80,7 +81,7 @@ export async function updateApplication(req, res) {
     const { status, notes } = req.body;
 
     if (IS_VERCEL) {
-      console.log('[appController] Demo mode — update not persisted');
+      info('[appController] Demo mode — update not persisted');
       const mockUpdated = {
         id,
         status: status || 'Applied',
@@ -99,7 +100,7 @@ export async function updateApplication(req, res) {
     await writeJson(APPS_FILE, apps);
     res.json({ success: true, data: apps[index] });
   } catch (error) {
-    console.error('[updateApplication]', error);
+    logError('[updateApplication] error', error);
     res.status(500).json({ success: false, message: isProd ? 'Failed to update application' : error.message });
   }
 }
@@ -109,7 +110,7 @@ export async function deleteApplication(req, res) {
     const { id } = req.params;
 
     if (IS_VERCEL) {
-      console.log('[appController] Demo mode — delete not persisted');
+      info('[appController] Demo mode — delete not persisted');
       return res.json({ success: true, message: 'Application removed from tracker', demo: true });
     }
 
@@ -121,7 +122,7 @@ export async function deleteApplication(req, res) {
     await writeJson(APPS_FILE, filtered);
     res.json({ success: true, message: 'Application removed from tracker' });
   } catch (error) {
-    console.error('[deleteApplication]', error);
+    logError('[deleteApplication] error', error);
     res.status(500).json({ success: false, message: isProd ? 'Failed to delete application' : error.message });
   }
 }
